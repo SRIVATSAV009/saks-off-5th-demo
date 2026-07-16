@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+:root {
+  --color-ink: #161513;
+  --color-paper: #ffffff;
+  --color-paper-alt: #f6f4f0;
+  --color-line: #e2ded5;
+  --color-muted: #726c62;
+  --color-gold: #9c7a3c;
+  --color-sale: #a4231d;
+}
+
+@theme inline {
+  --color-ink: var(--color-ink);
+  --color-paper: var(--color-paper);
+  --color-paper-alt: var(--color-paper-alt);
+  --color-line: var(--color-line);
+  --color-muted: var(--color-muted);
+  --color-gold: var(--color-gold);
+  --color-sale: var(--color-sale);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-playfair);
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* ---- Shared component classes ---- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  border: 1px solid var(--color-ink);
+  transition: background-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.btn-primary:hover:not(:disabled) {
+  background: #000;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-ink);
+}
+.btn-outline:hover:not(:disabled) {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.7rem;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 0.35rem;
+}
+
+.field-input {
+  width: 100%;
+  border: 1px solid var(--color-line);
+  background: var(--color-paper);
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  color: var(--color-ink);
+}
+.field-input:focus {
+  outline: none;
+  border-color: var(--color-ink);
+}
+
+.badge-sale {
+  color: var(--color-sale);
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.container-page {
+  max-width: 84rem;
+  margin: 0 auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.link-quiet {
+  color: var(--color-muted);
+  text-decoration: none;
+}
+.link-quiet:hover {
+  color: var(--color-ink);
+  text-decoration: underline;
+}
+
+.card-outline {
+  border: 1px solid var(--color-line);
+  background: var(--color-paper);
+}
+
+.promo-banner {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  padding: 0.55rem 1rem;
+}
+
+.toast-success {
+  background: #f0f5ec;
+  border: 1px solid #b7cba3;
+  color: #3c5a29;
+}
+
+.toast-error {
+  background: #fbecec;
+  border: 1px solid #e2b1b1;
+  color: #8a2b2b;
+}

@@ -1,0 +1,195 @@
+// Prisma schema for the Saks OFF 5TH portfolio demo
+// SQLite datasource keeps everything local — no external DB needed.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ---------- Storefront: Catalog ----------
+
+model Product {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  brand       String
+  department  String // e.g. Women, Men, Kids, Home
+  category    String // e.g. Dresses, Shoes, Handbags
+  description String
+  price       Float // original / list price
+  salePrice   Float? // discounted price, null if not on sale
+  images      String // JSON-encoded array of image URLs
+  colors      String // JSON-encoded array of color names
+  sizes       String // JSON-encoded array of size labels
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  cartItems     CartItem[]
+  wishlistItems WishlistItem[]
+  orderItems    OrderItem[]
+}
+
+// ---------- Identity ----------
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  createdAt    DateTime @default(now())
+
+  addresses Address[]
+  orders    Order[]
+  cart      Cart?
+  wishlist  Wishlist?
+}
+
+model Address {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String // e.g. "Home", "Work"
+  line1     String
+  line2     String?
+  city      String
+  state     String
+  zip       String
+  country   String  @default("US")
+  isDefault Boolean @default(false)
+}
+
+// ---------- Cart ----------
+
+model Cart {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  items     CartItem[]
+  promoCode String? // applied promotion code, validated against Promotion table
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  color     String
+  size      String
+  quantity  Int     @default(1)
+}
+
+// ---------- Wishlist ----------
+
+model Wishlist {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  items WishlistItem[]
+}
+
+model WishlistItem {
+  id         String   @id @default(cuid())
+  wishlistId String
+  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  addedAt    DateTime @default(now())
+}
+
+// ---------- Orders (post-checkout) ----------
+
+model Order {
+  id          String      @id @default(cuid())
+  orderNumber String      @unique
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  status      String      @default("Placed") // Placed, Processing, Shipped, Delivered
+  subtotal    Float
+  discount    Float       @default(0)
+  shipping    Float
+  tax         Float
+  total       Float
+  promoCode   String?
+  shipLine1   String
+  shipLine2   String?
+  shipCity    String
+  shipState   String
+  shipZip     String
+  shipMethod  String
+  createdAt   DateTime    @default(now())
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  name      String // snapshot at time of purchase
+  color     String
+  size      String
+  quantity  Int
+  price     Float // unit price at time of purchase
+}
+
+// ---------- Business Manager stand-in ----------
+
+model Promotion {
+  id            String    @id @default(cuid())
+  code          String    @unique
+  name          String
+  description   String
+  discountType  String // "percent" | "fixed" | "free_shipping"
+  discountValue Float // percent (0-100) or fixed dollar amount
+  startDate     DateTime
+  endDate       DateTime
+  enabled       Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+}
+
+model ContentAsset {
+  id        String   @id @default(cuid())
+  assetId   String   @unique // BM-style content asset ID, e.g. "home-hero-banner"
+  name      String
+  body      String // HTML/markdown body rendered into the slot
+  status    String   @default("online") // "online" | "offline"
+  updatedAt DateTime @updatedAt
+}
+
+model ContentSlot {
+  id             String   @id @default(cuid())
+  slotId         String   @unique // e.g. "home-top-banner", "plp-banner", "checkout-banner"
+  page           String // which page/template the slot renders on
+  contentAssetId String? // FK by assetId string, resolved at render time
+  updatedAt      DateTime @updatedAt
+}
+
+model Job {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String
+  schedule    String // cron-style description, e.g. "Daily @ 2:00 AM"
+  lastRunAt   DateTime?
+  lastStatus  String? // "Success" | "Failed"
+  enabled     Boolean   @default(true)
+}
+
+model JobLog {
+  id        String   @id @default(cuid())
+  jobId     String
+  jobName   String
+  status    String // "Success" | "Failed"
+  message   String
+  startedAt DateTime @default(now())
+  durationMs Int
+}
