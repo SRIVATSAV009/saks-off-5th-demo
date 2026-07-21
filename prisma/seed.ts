@@ -6,9 +6,11 @@ import bcrypt from "bcryptjs";
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL as string });
 const db = new PrismaClient({ adapter });
 
-function img(seed: string, w = 700, h = 900) {
-  return `https://picsum.photos/seed/${seed}/${w}/${h}`;
-}
+// Real product photography from Pexels (free to use, no attribution required
+// under the Pexels License: https://www.pexels.com/license/). Each URL was
+// verified to resolve with a 200 and an image/jpeg content-type.
+const PEXELS = (id: string) =>
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=700&h=900&fit=crop`;
 
 const products = [
   {
@@ -21,7 +23,7 @@ const products = [
       "A fluid silk-blend wrap dress with a self-tie waist and bias-cut skirt that moves with every step. Fully lined.",
     price: 398,
     salePrice: 179,
-    images: [img("isla-dress-1"), img("isla-dress-2"), img("isla-dress-3")],
+    images: [PEXELS("35392914"), PEXELS("7625120"), PEXELS("8244709")],
     colors: ["Emerald", "Black", "Ivory"],
     sizes: ["XS", "S", "M", "L", "XL"],
     featured: true,
@@ -36,7 +38,7 @@ const products = [
       "Italian pebbled-leather tote with a structured silhouette, protective feet, and a detachable zip pouch.",
     price: 895,
     salePrice: 349,
-    images: [img("tote-1"), img("tote-2"), img("tote-3")],
+    images: [PEXELS("36365228"), PEXELS("27174557"), PEXELS("27046146")],
     colors: ["Cognac", "Black", "Taupe"],
     sizes: ["One Size"],
     featured: true,
@@ -51,7 +53,7 @@ const products = [
       "Two-ply cashmere knit with ribbed trim at the cuffs and hem. A closet staple that layers effortlessly.",
     price: 328,
     salePrice: 129,
-    images: [img("sweater-1"), img("sweater-2")],
+    images: [PEXELS("14903440"), PEXELS("10464371")],
     colors: ["Camel", "Charcoal", "Blush"],
     sizes: ["XS", "S", "M", "L"],
     featured: false,
@@ -66,7 +68,7 @@ const products = [
       "Hand-finished suede Chelsea boot on a stacked leather heel with elastic side gussets for an easy fit.",
     price: 495,
     salePrice: 219,
-    images: [img("boot-1"), img("boot-2")],
+    images: [PEXELS("15070558"), PEXELS("33633245")],
     colors: ["Chestnut", "Black"],
     sizes: ["6", "7", "8", "9", "10", "11"],
     featured: true,
@@ -81,7 +83,7 @@ const products = [
       "A modern-fit blazer cut from Italian wool with a half-canvas construction that holds its shape all day.",
     price: 695,
     salePrice: 289,
-    images: [img("blazer-1"), img("blazer-2")],
+    images: [PEXELS("9168856"), PEXELS("9464620")],
     colors: ["Navy", "Charcoal"],
     sizes: ["38R", "40R", "42R", "44R", "46R"],
     featured: false,
@@ -96,7 +98,7 @@ const products = [
       "Crisp cotton oxford with a spread collar and mother-of-pearl buttons. Wrinkle-resistant finish.",
     price: 128,
     salePrice: 59,
-    images: [img("oxford-1"), img("oxford-2")],
+    images: [PEXELS("16430896"), PEXELS("35462560")],
     colors: ["White", "Light Blue", "Pink"],
     sizes: ["S", "M", "L", "XL", "XXL"],
     featured: false,
@@ -111,7 +113,7 @@ const products = [
       "Accordion-pleated midi skirt in a fluid satin-back crepe. Elastic waistband for a comfortable, flattering fit.",
     price: 248,
     salePrice: 99,
-    images: [img("skirt-1"), img("skirt-2")],
+    images: [PEXELS("4690501"), PEXELS("4271569")],
     colors: ["Champagne", "Black", "Cobalt"],
     sizes: ["XS", "S", "M", "L"],
     featured: false,
@@ -126,7 +128,7 @@ const products = [
       "Metallic leather sandal with crisscross straps and a padded footbed on a comfortable 75mm heel.",
     price: 350,
     salePrice: 149,
-    images: [img("sandal-1"), img("sandal-2")],
+    images: [PEXELS("27063075"), PEXELS("97048")],
     colors: ["Gold", "Silver", "Black"],
     sizes: ["6", "7", "8", "9", "10"],
     featured: true,
@@ -141,7 +143,7 @@ const products = [
       "Lightweight down-fill puffer with a quilted diamond pattern, zip pockets, and a packable hood.",
     price: 425,
     salePrice: 189,
-    images: [img("puffer-1"), img("puffer-2")],
+    images: [PEXELS("20645811"), PEXELS("7147889")],
     colors: ["Black", "Olive", "Navy"],
     sizes: ["S", "M", "L", "XL"],
     featured: false,
@@ -156,7 +158,7 @@ const products = [
       "Stonewashed pure linen throw with a relaxed drape, mitered corners, and a fringed edge.",
     price: 168,
     salePrice: 79,
-    images: [img("throw-1"), img("throw-2")],
+    images: [PEXELS("16648305"), PEXELS("7055750")],
     colors: ["Natural", "Sage", "Terracotta"],
     sizes: ["50x60"],
     featured: false,
@@ -171,7 +173,7 @@ const products = [
       "Glazed porcelain dinnerware set for four — dinner plates, salad plates, and bowls. Dishwasher and microwave safe.",
     price: 240,
     salePrice: 109,
-    images: [img("dinnerware-1"), img("dinnerware-2")],
+    images: [PEXELS("3847465"), PEXELS("18977904")],
     colors: ["White", "Slate Blue"],
     sizes: ["Set of 12"],
     featured: false,
@@ -186,7 +188,7 @@ const products = [
       "Crisp poplin blouse with a tie neck and gathered sleeves. Effortlessly pairs with tailored trousers or denim.",
     price: 158,
     salePrice: 69,
-    images: [img("blouse-1"), img("blouse-2")],
+    images: [PEXELS("7945547"), PEXELS("8289271")],
     colors: ["White", "Stripe", "Sky"],
     sizes: ["XS", "S", "M", "L", "XL"],
     featured: false,
@@ -201,7 +203,7 @@ const products = [
       "Slim pebbled-leather card holder with four card slots and a central pocket for folded bills.",
     price: 145,
     salePrice: 65,
-    images: [img("cardholder-1"), img("cardholder-2")],
+    images: [PEXELS("27467355"), PEXELS("7742559")],
     colors: ["Black", "Cognac"],
     sizes: ["One Size"],
     featured: false,
@@ -216,7 +218,7 @@ const products = [
       "Clean-lined leather sneaker with a cupsole and perforated toe cap for breathability.",
     price: 275,
     salePrice: 129,
-    images: [img("sneaker-1"), img("sneaker-2")],
+    images: [PEXELS("27008322"), PEXELS("13536939")],
     colors: ["White", "Black"],
     sizes: ["7", "8", "9", "10", "11", "12"],
     featured: true,
@@ -231,7 +233,7 @@ const products = [
       "Stretch cotton chino with a slim, tapered leg and a flat front for a clean, tailored line.",
     price: 148,
     salePrice: 62,
-    images: [img("chino-1"), img("chino-2")],
+    images: [PEXELS("27584193"), PEXELS("9464625")],
     colors: ["Khaki", "Navy", "Olive"],
     sizes: ["30", "32", "34", "36", "38"],
     featured: false,
@@ -246,7 +248,7 @@ const products = [
       "Liquid satin slip dress cut on the bias for a sculpted, fluid drape. Adjustable straps.",
     price: 298,
     salePrice: 139,
-    images: [img("slipdress-1"), img("slipdress-2")],
+    images: [PEXELS("34967331"), PEXELS("34817396")],
     colors: ["Champagne", "Black", "Merlot"],
     sizes: ["XS", "S", "M", "L"],
     featured: true,
@@ -356,23 +358,23 @@ async function main() {
   console.log("Seeding database...");
 
   for (const p of products) {
+    const data = {
+      name: p.name,
+      brand: p.brand,
+      department: p.department,
+      category: p.category,
+      description: p.description,
+      price: p.price,
+      salePrice: p.salePrice,
+      images: JSON.stringify(p.images),
+      colors: JSON.stringify(p.colors),
+      sizes: JSON.stringify(p.sizes),
+      featured: p.featured,
+    };
     await db.product.upsert({
       where: { slug: p.slug },
-      update: {},
-      create: {
-        slug: p.slug,
-        name: p.name,
-        brand: p.brand,
-        department: p.department,
-        category: p.category,
-        description: p.description,
-        price: p.price,
-        salePrice: p.salePrice,
-        images: JSON.stringify(p.images),
-        colors: JSON.stringify(p.colors),
-        sizes: JSON.stringify(p.sizes),
-        featured: p.featured,
-      },
+      update: data,
+      create: { slug: p.slug, ...data },
     });
   }
 
