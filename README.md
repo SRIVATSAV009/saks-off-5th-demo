@@ -1,36 +1,46 @@
 # Saks OFF 5TH — SFCC-Style Storefront & Business Manager (Portfolio Demo)
 
-A local, self-contained portfolio project that recreates the shape of a **Salesforce B2C
+A self-contained portfolio project that recreates the shape of a **Salesforce B2C
 Commerce (SFCC) implementation and customization** engagement: a discount-retail storefront
 (product listing/detail, cart, wishlist, checkout, account dashboard) plus a **Business
 Manager–style admin panel** for Promotions, Content Slots, Content Assets, and Jobs.
 
+**Live demo:** https://saks-off-5th-demo.vercel.app/ — deployed on Vercel, backed by a real
+Postgres database on [Neon](https://neon.tech), auto-deploying on every push to `main`.
+
 > **Not affiliated with Saks OFF 5TH, Salesforce, or Google.** Real SFCC is a licensed,
 > hosted platform (Business Manager + WebDAV-deployed cartridges against a provisioned
-> sandbox) that cannot run standalone on a laptop. This project reimplements the same
-> concepts — storefront customization, promotions, content slots, scheduled jobs — as a
-> plain Next.js + SQLite app so the whole thing runs locally with `npm run dev` and no
-> external accounts.
+> sandbox). This project reimplements the same concepts — storefront customization,
+> promotions, content slots, scheduled jobs — as a plain Next.js + Postgres app.
 
 ## Stack
 
 - **Next.js 16** (App Router, Server Components, Server Actions)
 - **TypeScript**, **Tailwind CSS v4**
-- **Prisma 7** + **SQLite** (via the `better-sqlite3` driver adapter) — zero external DB setup
+- **Prisma 7** + **PostgreSQL** (via the `@prisma/adapter-pg` driver adapter) — runs against
+  any Postgres provider (Neon, Supabase, Vercel Postgres, or a local instance)
 - **Google reCAPTCHA v2** (checkbox) on login, register, and checkout
 - Cookie-based session auth (HMAC-signed, no external auth provider)
+- Deployed on **Vercel**, database hosted on **Neon**
 
 ## Getting Started
 
+Requires a Postgres database — [Neon](https://neon.tech) has a free tier that takes about a
+minute to set up, or point this at any other Postgres instance (Supabase, Vercel Postgres,
+local).
+
 ```bash
 npm install
-cp .env.example .env.local   # already has working defaults, see below
-npx prisma migrate dev       # creates dev.db and applies the schema
-npx tsx prisma/seed.ts       # seeds products, promotions, content, jobs, a demo user
+cp .env.example .env.local   # then fill in DATABASE_URL with your Postgres connection string
+npx prisma migrate dev       # creates the schema (and the initial migration, first run only)
+npx prisma db seed           # seeds products, promotions, content, jobs, a demo user
 npm run dev
 ```
 
 Visit **http://localhost:3000**.
+
+`npx prisma db seed` (rather than running `tsx prisma/seed.ts` directly) ensures
+`DATABASE_URL` is loaded from `.env` via `prisma.config.ts` before the seed script connects.
 
 ### Accounts
 
@@ -102,11 +112,13 @@ src/app/                    storefront routes (App Router, Server Components + A
 src/app/admin/              Business Manager admin panel (password-gated route group)
 ```
 
-## Notes & limitations (by design, for a local demo)
+## Notes & limitations (by design, for a portfolio demo)
 
 - **Auth** is a minimal HMAC-signed cookie, not a production-grade auth provider.
 - **Payment** on checkout is a mock form (no processor is called); only basic field
   presence is validated.
-- **Images** are placeholder photos from picsum.photos, not real product photography.
+- **Images** are real photography sourced from [Pexels](https://www.pexels.com) (free to use,
+  no attribution required under the Pexels License), matched to each product's category —
+  not actual product photography from the brands/items described.
 - **Admin auth** is a single shared password (`ADMIN_PASSWORD` in `.env.local`), standing in
   for BM's per-user login.
